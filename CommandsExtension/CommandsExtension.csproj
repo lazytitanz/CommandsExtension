@@ -18,6 +18,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\TwitchChatBot\TwitchChatBot\TwitchChatBot.vbproj">
       <Private>false</Private>
+      <ExcludeAssets>runtime</ExcludeAssets>
     </ProjectReference>
   </ItemGroup>
 

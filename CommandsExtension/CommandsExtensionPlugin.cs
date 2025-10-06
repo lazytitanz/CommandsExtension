@@ -18,6 +18,7 @@ namespace CommandsExtension
         private BotSDK sdk;
         private DatabaseHelper db;
         private WebServer webServer;
+        private TaskScheduler taskScheduler;
         private System.Collections.Generic.HashSet<string> registeredCommands = new System.Collections.Generic.HashSet<string>();
 
         public void Initialize(BotSDK sdk)
@@ -38,6 +39,13 @@ namespace CommandsExtension
                 // Start web server
                 webServer = new WebServer(webServerPort, db, this);
                 webServer.Start();
+
+                // Initialize and start task scheduler
+                taskScheduler = new TaskScheduler(db, sdk, Name);
+                taskScheduler.Start();
+
+                // Link task scheduler to web server for reload operations
+                webServer.SetTaskScheduler(taskScheduler);
 
                 sdk.LogInfo(Name, "CommandsExtension plugin initialized successfully!");
                 sdk.LogInfo(Name, $"Web UI: http://localhost:{webServerPort}");
@@ -151,6 +159,7 @@ namespace CommandsExtension
 
             try
             {
+                taskScheduler?.Stop();
                 webServer?.Stop();
             }
             catch (Exception ex)

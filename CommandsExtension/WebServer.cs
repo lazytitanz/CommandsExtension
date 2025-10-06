@@ -16,6 +16,7 @@ namespace CommandsExtension
         private readonly int _port;
         private readonly DatabaseHelper _db;
         private readonly CommandsExtensionPlugin _plugin;
+        private TaskScheduler _taskScheduler;
         private CancellationTokenSource _cancellationTokenSource;
 
         /// <summary>
@@ -29,6 +30,16 @@ namespace CommandsExtension
             _port = port;
             _db = db;
             _plugin = plugin;
+        }
+
+        /// <summary>
+        /// Sets the task scheduler instance for reload operations.
+        /// Must be called after WebServer construction and before tasks are modified.
+        /// </summary>
+        /// <param name="taskScheduler">The task scheduler instance.</param>
+        public void SetTaskScheduler(TaskScheduler taskScheduler)
+        {
+            _taskScheduler = taskScheduler;
         }
 
         public void Start()
@@ -251,6 +262,9 @@ namespace CommandsExtension
                     command.ExecuteNonQuery();
                 }
 
+                // Reload scheduled tasks to start the new task
+                _taskScheduler?.ReloadTasks();
+
                 return "{\"success\": true}";
             }
         }
@@ -265,6 +279,10 @@ namespace CommandsExtension
                 command.Parameters.AddWithValue("@id", int.Parse(id));
                 command.ExecuteNonQuery();
             }
+
+            // Reload scheduled tasks to stop the deleted task
+            _taskScheduler?.ReloadTasks();
+
             return "{\"success\": true}";
         }
 
