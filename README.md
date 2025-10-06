@@ -9,7 +9,7 @@ A dynamic command management plugin for TwitchChatBot that provides a web-based 
 - 💾 **Persistent Storage** - SQLite database for reliable command storage
 - 🔒 **Role-Based Permissions** - Set minimum roles (Everyone, Subscriber, VIP, Moderator, Broadcaster)
 - ⏱️ **Cooldown Management** - Per-user and global cooldowns
-- 📋 **Command Scheduling** - Database support for timed/recurring commands (UI coming soon)
+- 📋 **Scheduled Tasks** - Create recurring messages that send automatically at set intervals
 
 ## Requirements
 
@@ -100,7 +100,7 @@ PluginData/commandextensionsplugin.db
 
 **Tables:**
 - `CustomCommands` - Stores command definitions
-- `ScheduledTasks` - Reserved for future scheduled command feature
+- `ScheduledTasks` - Stores scheduled task definitions (name, message, interval)
 
 ## Architecture
 
@@ -108,6 +108,8 @@ PluginData/commandextensionsplugin.db
 
 - **CommandsExtensionPlugin** - Main plugin entry point, handles initialization and command registration
 - **DynamicCommand** - Implements ICommand for dynamically loaded commands
+- **ScheduledTaskCommand** - Implements IScheduledCommand for recurring messages
+- **TaskScheduler** - Manages scheduled task registration with bot scheduler
 - **WebServer** - HTTP server providing REST API and web UI
 - **DatabaseHelper** - SQLite database management
 
@@ -137,6 +139,8 @@ dotnet clean && dotnet build
 CommandsExtension/
 ├── CommandsExtensionPlugin.cs  # Main plugin class
 ├── DynamicCommand.cs           # Command implementation
+├── ScheduledTaskCommand.cs     # Scheduled task implementation
+├── TaskScheduler.cs            # Task scheduler manager
 ├── WebServer.cs                # HTTP server
 ├── DatabaseHelper.cs           # SQLite management
 ├── webUI.cs                    # Web UI HTML
@@ -196,13 +200,14 @@ CommandsExtension/
 - Deletes command by ID
 
 **GET /api/tasks**
-- Returns scheduled tasks (not yet implemented)
+- Returns list of all scheduled tasks
 
 **POST /api/tasks**
-- Creates scheduled task (not yet implemented)
+- Creates a new scheduled task
+- Body: `{ "taskName": "Reminder", "message": "Remember to follow!", "intervalMinutes": 30 }`
 
 **DELETE /api/tasks/{id}**
-- Deletes scheduled task (not yet implemented)
+- Deletes scheduled task by ID
 
 ## License
 
