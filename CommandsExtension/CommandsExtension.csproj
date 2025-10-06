@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>CommandsExtension</RootNamespace>
+    <AssemblyName>CommandsExtensionPlugin</AssemblyName>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+
+  <Target Name="CopyPluginToBot" AfterTargets="Build">
+    <ItemGroup>
+      <PluginFiles Include="$(OutputPath)**\*.*" Exclude="$(OutputPath)**\TwitchChatBot.*;$(OutputPath)**\TwitchLib.*;$(OutputPath)**\Spectre.*;$(OutputPath)**\Newtonsoft.*;$(OutputPath)**\Mono.Cecil.*;$(OutputPath)**\Microsoft.Extensions.*;$(OutputPath)**\System.IO.Pipelines.*;$(OutputPath)**\System.Text.*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(PluginFiles)" DestinationFolder="..\..\TwitchChatBot\TwitchChatBot\bin\Debug\net8.0\Plugins\CommandExtensions\%(RecursiveDir)" SkipUnchangedFiles="true" />
+  </Target>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\TwitchChatBot\TwitchChatBot\TwitchChatBot.vbproj">
+      <Private>false</Private>
+    </ProjectReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="plugin.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.9" />
+  </ItemGroup>
+
+</Project>
